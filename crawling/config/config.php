@@ -14,11 +14,6 @@ function tour_operators(){
 			"url" => ["http://www.quertour.de/"],
 			"class" => new Quertour(),
 			"type" => "html"
-		],
-		[
-			"name" => "onlineweg",
-			"url" => ["https://www.onlineweg.de/"],
-			"type" => "html"
 		]
 	];
 }
