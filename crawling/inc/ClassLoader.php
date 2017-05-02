@@ -1,8 +1,8 @@
 <?php
 spl_autoload_register(function ($className) {
-	$folder = 'operators/';
-	if (file_exists($folder . $className . '.php')) {
-		require_once $folder . $className . '.php';
+	$fileName = '../operators/' . $className . '.php';
+	if (file_exists($fileName)) {
+		require_once $fileName;
 		return true;
 	}
 	return false;

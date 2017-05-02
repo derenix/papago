@@ -1,0 +1,7 @@
+<?php
+
+const DATABASE_SERVER = "##";
+const DATABASE_NAME = "##";
+const DATABASE_PORT = "##";
+const DATABASE_USER = "##";
+const DATABASE_PASSWORD = "##";

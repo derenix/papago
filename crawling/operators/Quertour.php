@@ -4,32 +4,82 @@ include_once('inc/simplehtmldom_1_5/simple_html_dom.php');
 
 class Quertour{
 
+	public function init($page){
+
+		$trips_all = $this->findTrips($page);
+		echo 'crawling for <em>"' .$page['url']. '"</em> successfull<br />';
+		echo "<pre>";
+		print_r($trips_all);
+		echo "</pre>";
+	}
+
 	/**
 	 * Find All Trips On Given Page
 	 *
 	 * @param $pages
 	 * @return array
 	 */
-	private function findTrips($pages){
+	private function findTrips($page){
 		$context = stream_context_create(array('http' => array('header' => 'User-Agent: Mozilla compatible')));
+		$response = file_get_contents($page['url'], false, $context);
+		$html = str_get_html($response);
+
+		$database = new DB();
+		$database->beginTransaction();
+		$database->query('INSERT INTO trips (
+			 operator_id, 
+			 title,
+			 excerpt,
+			 description,
+			 image_teaser,
+			 image_detail,
+			 price, 
+			 price_additional,
+			 url_detail,
+			 url_booking,
+			 date_from,
+			 date_to,
+			 booking_status
+			) VALUES (
+			 :operator_id, 
+			 :title,
+			 :excerpt,
+			 :description,
+			 :image_teaser,
+			 :image_detail,
+			 :price, 
+			 :price_additional,
+			 :url_detail,
+			 :url_booking,
+			 :date_from,
+			 :date_to,
+			 :booking_status
+			)');
+
 		$trips_all = array();
 
-		// crawl per page
-		foreach ($pages as $page){
-			$response = file_get_contents($page, false, $context);
-			$html = str_get_html($response);
+		foreach ($html->find('.reiseziele-list') as $element) {
+			$trip = $this->getSingleTrip($element);
 
-			$trips_per_page = array();
-			foreach ($html->find('.reiseziele-list') as $element) {
-				$trip = $this->getSingleTrip($element);
-				array_push($trips_per_page, $trip);
-			}
+			$database->bind(':operator_id', $page['id']);
+			$database->bind(':title', $trip['title']);
+			$database->bind(':excerpt', '');
+			$database->bind(':description', $trip['description']);
+			$database->bind(':image_teaser', '');
+			$database->bind(':image_detail', $trip['img']);
+			$database->bind(':price', $trip['price']);
+			$database->bind(':price_additional', '');
+			$database->bind(':url_detail', '');
+			$database->bind(':url_booking', $trip['date'][0]['url']);
+			$database->bind(':date_from', $trip['date'][0]['date']);
+			$database->bind(':date_to', '');
+			$database->bind(':booking_status', $trip['status']);
+			$database->execute();
 
-			// TODO: insert in DB per Page !
-			array_push($trips_all, $trips_per_page);
+			array_push($trips_all, $trip);
 		}
 
-		// TODO: remove later
+		$database->endTransaction();
 		return $trips_all;
 	}
 
@@ -41,13 +91,12 @@ class Quertour{
 	 * @return array
 	 */
 	private function getSingleTrip($trip){
-		$reiseanbieter = "http://quertour.de/";
 		$date = array();
 
 		foreach ($trip->find('.reiseziele-list-info-wrappers a') as $date_item) {
 			$date_detail = array(
 				"date" => $date_item->plaintext,
-				"url" => $reiseanbieter . $date_item->href
+				"url" => $date_item->href
 			);
 			array_push($date, $date_detail);
 		}
@@ -67,15 +116,4 @@ class Quertour{
 		);
 	}
 
-
-	/**
-	 * Compile with Test Cases
-	 *
-	 * @return array
-	 */
-	public function test(){
-		$test_pages = ['demo/quertour.html'];
-
-		return $this->findTrips($test_pages);
-	}
 }
