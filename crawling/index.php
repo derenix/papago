@@ -9,7 +9,9 @@ include_once('inc/ClassLoader.php');
 
 $env = new Environment();
 $database = new DB();
+$db_update = false;
 
+if( isset($_GET["db"]) ){ $db_update = true; }
 
 // ===============================================
 // Load Operators
@@ -46,7 +48,7 @@ foreach ($operators as $operator) {
 
 		// Execute Compiling
 		foreach ($pages as $page) {
-			$class->init($page);
+			$class->init($page, $db_update);
 		}
 	}
 }
