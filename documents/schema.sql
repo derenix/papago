@@ -5,9 +5,9 @@
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.6.29)
+# Host: 127.0.0.1 (MySQL 5.6.34)
 # Datenbank: papago
-# Erstellt am: 2017-05-09 10:30:43 +0000
+# Erstellt am: 2017-05-09 18:20:46 +0000
 # ************************************************************
 
 
@@ -29,7 +29,7 @@ CREATE TABLE `operators` (
   `type` varchar(11) NOT NULL DEFAULT '',
   `blacklist` int(11) NOT NULL DEFAULT '0',
   `premium` int(11) NOT NULL DEFAULT '0',
-  `class` varchar(255) NOT NULL,
+  `class` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -56,16 +56,18 @@ CREATE TABLE `trips` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `excerpt` varchar(255) NOT NULL DEFAULT '',
   `description` text NOT NULL,
-  `image_teaser` varchar(255) NOT NULL DEFAULT '',
-  `image_detail` varchar(255) NOT NULL DEFAULT '',
+  `image_teaser` varchar(255) NOT NULL,
+  `image_detail` varchar(255) NOT NULL,
+  `category` varchar(255) NOT NULL DEFAULT '',
+  `saison` varchar(255) NOT NULL,
+  `date_from` datetime NOT NULL,
+  `date_to` datetime NOT NULL,
   `price` varchar(255) NOT NULL DEFAULT '',
   `price_additional` varchar(255) NOT NULL DEFAULT '',
   `url_detail` varchar(255) NOT NULL DEFAULT '',
   `url_booking` varchar(255) NOT NULL DEFAULT '',
   `booking_status` varchar(255) NOT NULL DEFAULT '',
   `blacklist` int(11) NOT NULL DEFAULT '0',
-  `date_from` datetime NOT NULL,
-  `date_to` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
