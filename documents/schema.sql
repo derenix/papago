@@ -5,9 +5,9 @@
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.6.34)
+# Host: 127.0.0.1 (MySQL 5.6.29)
 # Datenbank: papago
-# Erstellt am: 2017-05-01 11:45:26 +0000
+# Erstellt am: 2017-05-09 10:30:43 +0000
 # ************************************************************
 
 
@@ -25,10 +25,11 @@
 
 CREATE TABLE `operators` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
+  `operator_name` varchar(255) NOT NULL DEFAULT '',
   `type` varchar(11) NOT NULL DEFAULT '',
   `blacklist` int(11) NOT NULL DEFAULT '0',
   `premium` int(11) NOT NULL DEFAULT '0',
+  `class` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -63,6 +64,8 @@ CREATE TABLE `trips` (
   `url_booking` varchar(255) NOT NULL DEFAULT '',
   `booking_status` varchar(255) NOT NULL DEFAULT '',
   `blacklist` int(11) NOT NULL DEFAULT '0',
+  `date_from` datetime NOT NULL,
+  `date_to` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
