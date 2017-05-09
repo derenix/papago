@@ -27,6 +27,8 @@ class Quertour{
 			 title,
 			 excerpt,
 			 description,
+			 category,
+			 saison,
 			 image_teaser,
 			 image_detail,
 			 price, 
@@ -41,6 +43,8 @@ class Quertour{
 			 :title,
 			 :excerpt,
 			 :description,
+			 :category,
+			 :saison,
 			 :image_teaser,
 			 :image_detail,
 			 :price, 
@@ -56,8 +60,10 @@ class Quertour{
 			foreach ($trip as $item) {
 				$database->bind(':operator_id', $page['id']);
 				$database->bind(':title', $item['title']);
-				$database->bind(':excerpt', '');
-				$database->bind(':description', $item['description']);
+				$database->bind(':excerpt', $item['excerpt']);
+				$database->bind(':description', '');
+				$database->bind(':category', $item['category']);
+				$database->bind(':saison', $item['saison']);
 				$database->bind(':image_teaser', $item['img']);
 				$database->bind(':image_detail', '');
 				$database->bind(':price', $item['price']['price']);
@@ -90,10 +96,19 @@ class Quertour{
 
 		$trips_all = array();
 
-		foreach ($html->find('.reiseziele-list') as $element) {
-			$trip = $this->getSingleTrip($element);
+		foreach ($html->find('.reiseziele-list-saison') as $saison) {
+			$global_trip_data = array(
+				"saison" => $saison->find('.reiseziele-list-saison-header', 0)->plaintext
+			);
 
-			array_push($trips_all, $trip);
+			foreach ($saison->find('.reiseziele-list-reise') as $category) {
+				$global_trip_data["category"] = trim($category->find('.reiseziele-list-reise-header', 0)->plaintext);
+
+				foreach ($category->find('.reiseziele-list') as $trip) {
+					array_push($trips_all, $this->getSingleTrip($trip, $global_trip_data));
+				}
+			}
+
 		}
 
 		return $trips_all;
@@ -106,23 +121,25 @@ class Quertour{
 	 * @param $trip
 	 * @return array
 	 */
-	private function getSingleTrip($trip){
+	private function getSingleTrip($trip, $global_trip_data){
 		$trips = array();
 
 		$title = $trip->find('.reiseziele-list-headline', 0)->innertext;
-		$description = $trip->find('.reiseziele-list-name', 0)->innertext;
+		$excerpt = $trip->find('.reiseziele-list-name', 0)->innertext;
 		$price = $this->formatPrice($trip->find('.reiseziele-list-header-right b', 0)->innertext);
 		$img = $trip->find('.reiseziele-list-image')[0]->src;
 
 		foreach ($trip->find('.reiseziele-list-info-wrappers a') as $date_item) {
 			$subTrip = array(
 				"title" => $title,
-				"description" => $description,
+				"excerpt" => $excerpt,
+				"category" => $global_trip_data['category'],
+				"saison" => $global_trip_data['saison'],
 				"price" => $price,
 				"img" => $img,
 				"date" => $this->formatDate($date_item->plaintext),
 				"url" => $date_item->href,
-				"status" => $date_item->find('.rt-link-status', 0)->plaintext
+				"status" => trim($date_item->find('.rt-link-status', 0)->plaintext)
 			);
 
 			array_push($trips, $subTrip);
