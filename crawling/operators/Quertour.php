@@ -5,17 +5,13 @@ include_once('inc/simplehtmldom_1_5/simple_html_dom.php');
 class Quertour{
 
 	public function init($page, $db_update){
-		$trips_all = $this->findTrips($page);
+		$crawling = new Crawling();
 
-		if(!$db_update){
-			echo "<pre>";
-			print_r($trips_all);
-			echo "</pre>";
-		}else{
-			$crawling = new Crawling();
-			$crawling->saveDB($page, $trips_all);
-		}
+		$data = $crawling->get_page_by_curl($page['url']);
+		$html = str_get_html($data);
+		$trips = $this->findTrips($html);
 
+		$crawling->success($page, $trips, $db_update);
 	}
 
 
@@ -25,12 +21,7 @@ class Quertour{
 	 * @param $pages
 	 * @return array
 	 */
-	private function findTrips($page){
-		$crawling = new Crawling();
-
-		$data = $crawling->get_page_by_curl($page['url']);
-		$html = str_get_html($data);
-
+	private function findTrips($html){
 		$trips = array();
 
 		// search for every "saison" (eg Frühling, Sommer)
@@ -119,11 +110,6 @@ class Quertour{
 			"price_additional" => (preg_match("/[a-zA-Z]/", $priceString[0]) ? $priceString[0] : ""),
 			"price" => (preg_match("/[0-9.-]/", $priceString[1]) ? $priceString[1] : $priceString[1])
 		);
-	}
-
-
-	private function formatStatus($string){
-
 	}
 
 }

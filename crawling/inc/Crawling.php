@@ -22,6 +22,30 @@ class Crawling {
 	}
 
 
+	/**
+	 * Echo Trips or continue saving
+	 *
+	 * @param $page
+	 * @param $trips
+	 * @param $db_update
+	 */
+	public function success($page, $trips, $db_update){
+		if(!$db_update){
+			echo "<pre>";
+			print_r($trips);
+			echo "</pre>";
+		}else{
+			$this->saveDB($page, $trips);
+		}
+	}
+
+
+	/**
+	 * Save Trips in Database
+	 *
+	 * @param $page
+	 * @param $trips
+	 */
 	public function saveDB($page, $trips) {
 		$database = new DB();
 		$database->beginTransaction();
@@ -63,7 +87,7 @@ class Crawling {
 			$database->bind(':operator_id', $page['id']);
 			$database->bind(':title', $singleTrip['title']);
 			$database->bind(':excerpt', $singleTrip['excerpt']);
-			$database->bind(':description', '');
+			$database->bind(':description', $singleTrip['description']);
 			$database->bind(':category', $singleTrip['category']);
 			$database->bind(':saison', $singleTrip['saison']);
 			$database->bind(':image_teaser', $singleTrip['img']);
