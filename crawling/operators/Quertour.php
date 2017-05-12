@@ -44,6 +44,7 @@ class Quertour{
 
 					$singleTrip = array(
 						"title" => $tripCollection->find('.reiseziele-list-headline', 0)->innertext,
+						"description" => "",
 						"excerpt" => $tripCollection->find('.reiseziele-list-name', 0)->innertext,
 						"img" => $tripCollection->find('.reiseziele-list-image')[0]->src,
 						"category" => $global_trip_data['category'],
