@@ -21,11 +21,32 @@ if( isset($_GET["o"]) ){
 $database->bind(':blacklist', '0');
 $operators = $database->resultset();
 
+$onlyThisOperator = null;
+
+if($argc > 1) {
+	for($i=1; $i < $argc; $i++) {
+		$switch = $argv[$i];
+
+		switch($switch) {
+			case "--operator":
+			case "-o":
+				$onlyThisOperator = $argv[++$i];
+				break;
+			case "--db-update":
+				$db_update = true;
+				break;
+		}
+	}
+}
 
 // ===============================================
 // Load Class if Exist
 // ===============================================
 foreach ($operators as $operator) {
+	if(!is_null($onlyThisOperator) && $operator["operator_name"] !== $onlyThisOperator) {
+		continue;
+	}
+
 	$fileName = 'operators/' . $operator['class'] . '.php';
 
 	if (file_exists($fileName)) {

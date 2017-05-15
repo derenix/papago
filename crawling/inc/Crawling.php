@@ -84,7 +84,7 @@ class Crawling {
 			)');
 
 		foreach ($trips as $singleTrip) {
-			$database->bind(':operator_id', $page['id']);
+			$database->bind(':operator_id', $page['operator_id']);
 			$database->bind(':title', $singleTrip['title']);
 			$database->bind(':excerpt', $singleTrip['excerpt']);
 			$database->bind(':description', $singleTrip['description']);
